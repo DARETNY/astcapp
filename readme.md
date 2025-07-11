@@ -1,33 +1,52 @@
-a# ASTCAPP
 
-Bu proje, ASTC (Adaptive Scalable Texture Compression) formatındaki dosyaların yönetimi ve dönüştürülmesi için geliştirilmiştir.
+# astcapp
 
-## Proje Yapısı
+Bu proje, Python diliyle geliştirilmiş ve görsel arayüz için Streamlit kütüphanesini kullanan bir uygulamadır.
 
-- **main.py**: Ana uygulama dosyası.
-- **temp_conversion_files/**: Dönüştürülecek veya dönüştürülmüş örnek dosyalar (ASTC ve PNG formatında).
-- **xc/astcenc**: ASTC dosyalarını işlemek için kullanılan yardımcı program veya script.
+## Proje Amacı
+
+Bu projenin amacı, kullanıcıların web tabanlı bir arayüz üzerinden Python ile geliştirilmiş analizler veya uygulama özelliklerine kolayca erişmesini sağlamaktır.
 
 ## Özellikler
-- ASTC dosyalarını PNG formatına dönüştürme.
-- PNG dosyalarını ASTC formatına dönüştürme.
-- Örnek dosyalarla test imkanı.
 
-## Kullanım
+- Tamamen Python ile yazılmıştır
+- Streamlit ile modern web arayüzü
+- Kolay kurulum ve kullanım
 
-1. Gerekli bağımlılıkları yükleyin (varsa).
-2. `main.py` dosyasını çalıştırarak dönüştürme işlemlerini başlatın.
-3. Dönüştürülen dosyalar `temp_conversion_files/` klasöründe bulunacaktır.
+## Kurulum
 
-## Notlar
-- `xc/astcenc` aracı, ASTC dosya işlemleri için gereklidir.
-- Proje Python ile yazılmıştır.
+1. Depoyu klonlayın:
+   ```bash
+   git clone https://github.com/DARETNY/astcapp.git
+   ```
+2. Proje dizinine geçin:
+   ```bash
+   cd astcapp
+   ```
+3. Gereksinimleri yükleyin:
+   ```bash
+   pip install -r requirements.txt
+   ```
+   Eğer `requirements.txt` dosyası yoksa, Streamlit'i doğrudan yükleyebilirsiniz:
+   ```bash
+   pip install streamlit
+   ```
 
-## Katkı
-Katkıda bulunmak için lütfen bir pull request gönderin veya issue açın.
+## Çalıştırma
+
+Uygulamayı başlatmak için aşağıdaki komutu kullanın:
+
+```bash
+streamlit run main.py
+```
+
+Eğer ana dosyanız farklıysa, `main.py` yerine doğru dosya adını yazın.
+
+
+
+
+
 
 ---
 
-Geliştirici: [Sizin Adınız]
-Tarih: 2025
-
+Herhangi bir özel açıklama veya ek bilgi eklememi ister misiniz?
