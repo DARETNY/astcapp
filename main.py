@@ -10,10 +10,6 @@ import streamlit as st
 
 
 def find_astcenc_path():
-    """
-    astcenc'i arar, bulur ve çalıştırılabilir olduğundan emin olur.
-    Değilse, izinleri ayarlamaya çalışır.
-    """
     system = platform.system()
     executable_name = "astcenc.exe" if system == "Windows" else "astcenc"
 
@@ -41,9 +37,7 @@ def find_astcenc_path():
 
 
 def create_zip_in_memory(files_to_zip):
-    """
-    Verilen dosya yollarının listesini alıp bellekte bir zip arşivi oluşturur.
-    """
+    """Verilen dosya yollarının listesini alıp bellekte bir zip arşivi oluşturur."""
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         for file_path in files_to_zip:
@@ -52,9 +46,7 @@ def create_zip_in_memory(files_to_zip):
 
 
 def run_conversion(input_path, output_path, settings):
-    """
-    Verilen ayarlarla astcenc komutunu çalıştırır ve sonucu döndürür.
-    """
+    """Verilen ayarlarla astcenc komutunu çalıştırır ve sonucu döndürür."""
     command = [
         settings["astcenc_path"],
         settings["color_profile"],
@@ -74,19 +66,17 @@ def run_conversion(input_path, output_path, settings):
         return None, command
     except OSError as e:
         if e.errno == 8:  # Exec format error
-            st.error(f"**UYUMLULUK HATASI (Exec format error):** `astcenc` programı bu sunucunun işlemci mimarisiyle uyumlu değil. Lütfen 'Hata Ayıklama Bilgileri' bölümündeki talimatları izleyerek doğru dosyayı indirin.")
+            st.error("**UYUMLULUK HATASI:** `astcenc` bu işlemci mimarisiyle uyumlu değil.")
         else:
-            st.error(f"**BEKLENMEDİK İŞLETİM SİSTEMİ HATASI:** `astcenc` çalıştırılırken bir hata oluştu: {e}")
+            st.error(f"**İŞLETİM SİSTEMİ HATASI:** {e}")
         return None, command
     except Exception as e:
-        st.error(f"**BEKLENMEDİK HATA:** `astcenc` çalıştırılırken bir hata oluştu: {e}")
+        st.error(f"**BEKLENMEDİK HATA:** {e}")
         return None, command
 
 
 def display_result(original_file_path, original_filename, output_path, result, command):
-    """
-    Dönüştürme sonucunu arayüzde gösterir.
-    """
+    """Dönüştürme sonucunu arayüzde gösterir."""
     col1, col2 = st.columns([1, 2])
 
     with col1:
@@ -107,10 +97,10 @@ def display_result(original_file_path, original_filename, output_path, result, c
                 mime="application/octet-stream",
                 key=f"dl_{original_filename}"
             )
-            with st.expander("Çalıştırılan Komutun Detayları"):
+            with st.expander("Çalıştırılan Komut"):
                 st.code(' '.join(command), language="bash")
         else:
-            st.error(f"**`{original_filename}` dönüştürülürken bir hata oluştu!**")
+            st.error(f"**`{original_filename}` dönüştürülürken hata oluştu!**")
             with st.expander("Hata Detayları"):
                 st.code(result.stderr or "Hata mesajı alınamadı.", language="bash")
 
@@ -124,29 +114,16 @@ st.title("🖼️ PNG'den ASTC'ye Dönüştürücü")
 st.markdown("`.png` dosyalarınızı `.astc` formatına dönüştürmek için dosya yükleyin veya klasör yolu belirtin.")
 
 # --- HATA AYIKLAMA BÖLÜMÜ ---
-with st.expander("Yardımcı Hata Ayıklama Bilgileri (Yol ve Uyumluluk Sorunları İçin)"):
+with st.expander("Hata Ayıklama Bilgileri"):
     try:
-        # Sistem bilgilerini al
         sys_platform = platform.system()
         machine_arch = platform.machine()
 
-        st.write(f"**Sunucu İşletim Sistemi:** `{sys_platform}`")
-        st.write(f"**Sunucu Mimarisi (CPU Tipi):** `{machine_arch}`")
-
-        # Streamlit Cloud için özel talimat
-        if sys_platform == "Linux" and machine_arch == "x86_64":
-            st.info(
-                "**ÖNEMLİ BİLGİ:** Bu sunucu Linux (x86_64) üzerinde çalışıyor. "
-                "`astcenc` programının doğru sürümünü kullandığınızdan emin olun.\n\n"
-                "1. [ARM ASTC Encoder Releases](https://github.com/ARM-software/astc-encoder/releases) sayfasına "
-                "gidin.\n"
-                "2. `astcenc-x.x.x-linux-x64-sse4.1.zip` gibi **linux-x64** içeren dosyayı indirin.\n"
-                "3. İndirdiğiniz zip dosyasını açın ve içindeki `bin` klasöründe bulunan `astcenc` dosyasını "
-                "projenizin `bin` klasörüne yükleyin."
-            )
+        st.write(f"**İşletim Sistemi:** `{sys_platform}`")
+        st.write(f"**Mimari (CPU):** `{machine_arch}`")
 
         cwd = os.getcwd()
-        st.write(f"**Mevcut Çalışma Dizini:** `{cwd}`")
+        st.write(f"**Çalışma Dizini:** `{cwd}`")
         st.write("**Ana Dizin İçeriği:**")
         st.code('\n'.join(os.listdir(cwd)))
 
@@ -155,27 +132,26 @@ with st.expander("Yardımcı Hata Ayıklama Bilgileri (Yol ve Uyumluluk Sorunlar
             st.write("**'bin' Klasörü İçeriği:**")
             st.code('\n'.join(os.listdir(bin_path)))
     except Exception as e:
-        st.error(f"Hata ayıklama bilgileri alınırken bir hata oluştu: {e}")
+        st.error(f"Hata ayıklama bilgileri alınırken hata: {e}")
 
 st.divider()
 
-# --- BÖLÜM 0: astcenc YOLU AYARI ---
+# --- BÖLÜM 0: astcenc YOLU ---
 st.subheader("⚙️ `astcenc` Programının Konumu")
 
 auto_detected_path = find_astcenc_path()
 
 ASTCENC_PATH = st.text_input(
-    label="Kullanılacak `astcenc` yolunu onaylayın veya düzenleyin:",
+    label="Kullanılacak `astcenc` yolu:",
     value=auto_detected_path,
-    help="Uygulamanın kullanacağı `astcenc` programının tam yolu. Yukarıdaki 'Hata Ayıklama Bilgileri' bölümünden doğru yolu bulabilirsiniz."
+    help="Doğru yolu kontrol edin."
 )
 
 if not ASTCENC_PATH or not os.path.exists(ASTCENC_PATH):
-    st.error(
-        "Yukarıda belirtilen yolda geçerli bir `astcenc` dosyası bulunamadı. Lütfen yolu kontrol edin veya programı projenize (örneğin 'bin' klasörüne) eklediğinizden emin olun.")
+    st.error("Geçerli bir `astcenc` dosyası bulunamadı.")
     st.stop()
 else:
-    st.success(f"`astcenc` aracı şu yolda kullanılacak: `{ASTCENC_PATH}`")
+    st.success(f"`astcenc` aracı bulundu: `{ASTCENC_PATH}`")
 
 with st.sidebar:
     st.header("Dönüştürme Ayarları")
@@ -188,7 +164,7 @@ with st.sidebar:
     quality_index = quality_keys.index("-medium")
     conversion_settings = {
         "block_size": st.selectbox("Blok Boyutu", options=block_sizes, index=block_size_index),
-        "quality_key": st.selectbox("Kalite Profili",
+        "quality_key": st.selectbox("Kalite",
                                     options=quality_keys,
                                     format_func=lambda x: quality_presets[x],
                                     index=quality_index),
@@ -203,8 +179,8 @@ if not os.path.exists(TEMP_DIR):
 
 
 def process_files(file_list, from_folder=False):
-    """Dosya listesini işler, dönüştürür ve sonuçları gösterir."""
-    st.info(f"{len(file_list)} adet dosya işleniyor...")
+    """Dosya yükleme ile gelen dosyaları işler (indirilebilir)."""
+    st.info(f"{len(file_list)} dosya işleniyor...")
 
     zip_button_placeholder = st.empty()
     successful_conversions = []
@@ -225,7 +201,7 @@ def process_files(file_list, from_folder=False):
         result, command = run_conversion(input_path, output_path, conversion_settings)
 
         if result is None:
-            st.warning("Kritik bir hata nedeniyle işlemler durduruldu.")
+            st.warning("Kritik hata nedeniyle durdu.")
             break
 
         if result.returncode == 0:
@@ -237,7 +213,7 @@ def process_files(file_list, from_folder=False):
     if len(successful_conversions) > 1:
         zip_bytes = create_zip_in_memory(successful_conversions)
         zip_button_placeholder.download_button(
-            label="📦 Tümünü .zip Olarak İndir",
+            label="📦 Tümünü .zip indir",
             data=zip_bytes,
             file_name="converted_astc_files.zip",
             mime="application/zip",
@@ -246,13 +222,39 @@ def process_files(file_list, from_folder=False):
         )
 
 
+def process_folder(folder_path: Path):
+    """Belirtilen klasördeki PNG'leri dönüştürür, aynı yerde .astc üretir (duplicateler atlanır)."""
+    png_files = list(folder_path.rglob("*.png"))
+    if not png_files:
+        st.warning("Hiç `.png` bulunamadı.")
+        return
+
+    st.info(f"{len(png_files)} PNG bulundu, dönüştürme başlatılıyor...")
+
+    for input_path in png_files:
+        output_path = input_path.with_suffix(".astc")
+
+        if output_path.exists():
+            st.write(f"⚠️ {output_path} zaten mevcut, atlanıyor.")
+            continue
+
+        result, command = run_conversion(input_path, output_path, conversion_settings)
+
+        if result is None:
+            st.error(f"{input_path} dönüştürülemedi (kritik hata).")
+            break
+
+        if result.returncode == 0:
+            st.success(f"✅ {input_path} → {output_path}")
+        else:
+            st.error(f"❌ {input_path} hata verdi.")
+            with st.expander("Hata Detayı"):
+                st.code(result.stderr or "Hata mesajı yok", language="bash")
+
+
 # --- BÖLÜM 1: DOSYA YÜKLEME ---
-st.subheader("1. Dosyaları Yükleyerek Dönüştür")
-uploaded_files = st.file_uploader(
-    "Dönüştürmek istediğiniz PNG dosyalarını buraya sürükleyin veya seçin",
-    type="png",
-    accept_multiple_files=True
-)
+st.subheader("1. Dosya Yükleyerek Dönüştür")
+uploaded_files = st.file_uploader("PNG yükleyin", type="png", accept_multiple_files=True)
 if uploaded_files:
     process_files(uploaded_files, from_folder=False)
 
@@ -260,21 +262,14 @@ st.divider()
 
 # --- BÖLÜM 2: KLASÖR YOLU ---
 st.subheader("2. Klasör Yolu Belirterek Dönüştür")
-folder_path_str = st.text_input(
-    "İşlem yapılacak klasörün yolunu yapıştırın:",
-    placeholder="Örn: C:\\Users\\Kullanici\\Resimlerim"
-)
+folder_path_str = st.text_input("Klasör yolu girin:", placeholder="Örn: C:\\Users\\profile\\Resimler")
 if st.button("Klasördeki PNG'leri İşle"):
     if folder_path_str and os.path.isdir(folder_path_str):
         folder_path = Path(folder_path_str)
-        png_files = list(folder_path.glob("**/*.png"))
-
-        if not png_files:
-            st.warning("Belirtilen klasörde ve alt klasörlerinde hiç `.png` dosyası bulunamadı.")
-        else:
-            process_files(png_files, from_folder=True)
+        process_folder(folder_path)
     else:
-        st.error("Lütfen geçerli bir klasör yolu girin.")
+        st.error("Geçerli bir klasör yolu girin.")
+
 if __name__ == '__main__':
-    st.write("Uygulama çalışıyor. Lütfen yukarıdaki bölümleri kullanarak dosyalarınızı dönüştürün.")
+    st.write("Uygulama çalışıyor ✅")
     st.stop()
