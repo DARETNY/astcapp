@@ -23,9 +23,9 @@ Bu projenin amacı, kullanıcıların web tabanlı bir arayüz üzerinden Python
    ```bash
    cd astcapp
    ```
-3. Gereksinimleri yükleyin:
+3. Gerekli kütüphaneleri yükleyin:
    ```bash
-   pip install -r requirements.txt
+   pip install streamlit 
    ```
    Eğer `requirements.txt` dosyası yoksa, Streamlit'i doğrudan yükleyebilirsiniz:
    ```bash
