@@ -25,7 +25,7 @@ Bu projenin amacı, kullanıcıların web tabanlı bir arayüz üzerinden Python
    ```
 3. Gerekli kütüphaneleri yükleyin:
    ```bash
-   pip install streamlit 
+   pip install -r requirements.txt
    ```
    Eğer `requirements.txt` dosyası yoksa, Streamlit'i doğrudan yükleyebilirsiniz:
    ```bash
